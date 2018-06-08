@@ -12,7 +12,9 @@ The goals / steps of this project are the following:
 * Estimate a bounding box for vehicles detected.
 
 [//]: # (Image References)
-[image1]: ./examples/car_not_car.png
+[vehicleExample]: ./training_data/vehicles/KITTI_extracted/1.png
+[notvehicleExample]: ./training_data/non-vehicles/Extras/extra202.png
+[hogImage]: ./output_images/hogImage.png
 [image2]: ./examples/HOG_example.jpg
 [image3]: ./examples/sliding_windows.jpg
 [image4]: ./examples/sliding_window.jpg
@@ -28,26 +30,29 @@ The goals / steps of this project are the following:
 
 ### Data Set
 
-The training data from the KITTI and DTI databases. They are divided into "car" and "not car" samples. Here are examples of each:
+The training data from the KITTI and DTI databases. They are divided into "car" and "not car" samples. Here is one example of each:
 
-![alt text][image1]
+![vehicle][vehicleExample]
+![not vehicle][notvehicleExample]
 
 ### Histogram of Oriented Gradients (HOG)
 
 #### 1. Extracing HOG features
 
-HOG takes an image and extracts 
+HOG is useful as it not only takes the gradient (which we know from lane finding is an effective way to find lines) it also preserves information about the direction of the gradient. This makes it easier to identify shapes. Here is an example of what the HOG looks like for a vehicle image:
 
-I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
-
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+![HOG example][hogImage]
 
 
-![alt text][image2]
+#### 2. HOG parameters.
 
-#### 2. Explain how you settled on your final choice of HOG parameters.
+I left the `skimage.hog()` parameter orientations at 9, pixels_per_cell at 9, and cells_per_block at 2. It's possible to get more granular features and better prediction accuracy by changing the parameters, but it came at the cost of more time to compute the HOG. These parameter values give sufficient accuracy and take less time (though it still isn't fast).
 
-I tried various combinations of parameters and...
+I transformed the images to the HSV color space and used the S channel to compute the gradient. The s channel proved the best at picking out the shape of the car.
+
+### Color features
+
+I also extracted features from the color information in the images. The first is just the spatial positioning of the colors. This means just taking the image and lining up the pixels from top left to bottom right.
 
 #### 3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 

@@ -42,7 +42,7 @@ HOG is useful as it not only takes the gradient (which we know from lane finding
 
 I left the `skimage.hog()` orientations parameter at 9, pixels_per_cell at 9, and cells_per_block at 2. It's possible to get more granular features and better prediction accuracy by changing the parameters, but it came at the cost of more time to compute the HOG. These parameter values give sufficient accuracy and take less time (though it still isn't fast).
 
-I transformed the images to the HSV color space and used the S channel to compute the gradient. The s channel proved the best at picking out the shape of the car.
+After some testing, I found that the best color space was the YCrCb color space. I transformed the images to YCrCb and used the 1st channel to compute the gradient. This produced the best results out of any other colors I tried.
 
 ### Color features
 
@@ -95,6 +95,8 @@ This still has some false positives in it. To even further reduce the noise in t
 
 The final pipeline works by combining all the previous pieces. It takes in an image and then does a sliding window search across four scale sizes. For each window it extracts the HOG and color features and passes them to the classifier. If the classifier thinks the window contains a car it saves the window in a list. After all the windows are searched that list is passed to the heat map functionality which reduces the noise and identifies the cars.
 
+In order to further reduce the noise in the video, I track the location of the cars identified in previous frames and then focus an extra round of searching in that area. That extra search helped verify that the object really was a car and when coupled with higher thresholding it reduced the amount of false positives. The extra thresholding was accomplished with the decision_function in the LinearSVC. I only accepted the window as actually a car if the decision_function returned 1 or higher.
+
 ---
 
 ### Video Results
@@ -120,5 +122,3 @@ The railing on the bridges produce a lot of false positives. Some sort of intell
 #### Window Finding
 
 I just kinda guessed at good window sizes and eyeballed that they seemed to match the actual size of cars in the image. That could use some more formal analysis. It should be possible to use trigonometry to figure out the expected apparent size of a car at certain y positions in the image.
-
-It also might be beneficial to do a quick sweep of the image with a larger window size and then follow up with smaller windows in locations that were identified as potential cars. That could help reduce the false positives and help with the speed issue if we can avoid taking lots of windows in places where there aren't cars.

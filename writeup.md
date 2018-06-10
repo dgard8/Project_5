@@ -103,7 +103,7 @@ In order to further reduce the noise in the video, I track the location of the c
 
 Here's a [link to my video result](./output_images/project_video.mp4)
 
-The video isn't perfect. There are still some false positives and it loses track of the white car for a few seconds. I definitely wouldn't trust this pipeline to control my car. But it does do a decent job of identifying the cars during most of the video.
+The video isn't perfect. There are still a couple false positives and the boxes around the cars are a bit wobbly. But all in all, it does a pretty good job at finding the cars and tracking them.
 
 ---
 
